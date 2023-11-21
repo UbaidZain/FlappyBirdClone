@@ -1,7 +1,9 @@
 let bird = document.querySelector(".bird");
 let background = document.querySelector(".background").getBoundingClientRect();
-console.log(background.bottom);
 
+let message = document.querySelector(".message");
+let scoreVal = document.querySelector(".score-value");
+let scoreTitle = document.querySelector(".score-title");
 let birdCords = bird.getBoundingClientRect();
 let moveSpeed = 3;
 let gravity = 0.5;
@@ -11,14 +13,41 @@ let gameState = "start";
 
 document.addEventListener("keydown", (e) => {
   if (e.key == "Enter") {
-    if (gameState != "play") {
-      bird.style.top = "40vh";
+    if (gameState == "start" || gameState == "over") {
       gameState = "play";
+
+      message.innerHTML = "";
+      scoreTitle.innerHTML = "Score :";
+      scoreVal.innerHTML = "0";
+      bird.style.top = "40vh";
+
       addGravity();
+      play();
     }
   }
 });
+function play() {
+  if (gameState == "play") {
+    let pipeSprite = Array.from(document.getElementsByClassName("pipe_sprite"));
 
+    pipeSprite.forEach((element) => {
+      let pipeSpriteCords = element.getBoundingClientRect();
+      if (pipeSpriteCords.right <= 0) {
+        element.remove();
+      }
+      if (
+        birdCords.left < pipeSpriteCords.left + pipeSpriteCords.width &&
+        birdCords.left + birdCords.width > pipeSpriteCords.left &&
+        birdCords.top < pipeSpriteCords.top + pipeSpriteCords.height &&
+        birdCords.top + birdCords.height > pipeSpriteCords.top
+      ) {
+        gameState = "over";
+      }
+      element.style.left = pipeSpriteCords.left - moveSpeed + "px";
+    });
+    requestAnimationFrame(play);
+  }
+}
 function addGravity() {
   if (gameState === "play") {
     bird_dy += gravity;
@@ -28,9 +57,11 @@ function addGravity() {
         bird_dy = -8;
       }
     });
+
     if (birdTop <= 0 || birdCords.bottom >= background.bottom) {
       console.log(birdCords.bottom);
       gameState = "over";
+      message.innerHTML = "Press enter to restart";
       return;
     }
 
@@ -43,21 +74,18 @@ function addGravity() {
   }
 }
 let pipeGap = 36;
-
 function addPipes() {
-  let pipePosi = Math.floor(Math.random() * 43);
+  let pipePosi = Math.floor(Math.random() * 43) + 5;
   let pipeSpriteInv = document.createElement("div");
   pipeSpriteInv.classList.add("pipe_sprite");
   pipeSpriteInv.style.top = pipePosi - 70 + "vh";
-  pipeSpriteInv.style.left = "90vw";
+  pipeSpriteInv.style.left = "100vw";
   document.body.appendChild(pipeSpriteInv);
 
   let pipeSprite = document.createElement("div");
   pipeSprite.classList.add("pipe_sprite");
   pipeSprite.style.top = pipePosi + pipeGap + "vh";
-  pipeSprite.style.left = "90vw";
+  pipeSprite.style.left = "100vw";
   document.body.appendChild(pipeSprite);
-  requestAnimationFrame(addPipes);
 }
-
-requestAnimationFrame(addPipes);
+setInterval(addPipes, 2000);
