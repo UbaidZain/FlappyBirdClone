@@ -32,6 +32,7 @@ function play() {
 
     pipeSprite.forEach((element) => {
       let pipeSpriteCords = element.getBoundingClientRect();
+
       if (pipeSpriteCords.right <= 0) {
         element.remove();
       }
@@ -41,7 +42,13 @@ function play() {
         birdCords.top < pipeSpriteCords.top + pipeSpriteCords.height &&
         birdCords.top + birdCords.height > pipeSpriteCords.top
       ) {
-        gameState = "over";
+        endGame();
+      }
+      if (
+        birdCords.left < pipeSpriteCords.left + pipeSpriteCords.width &&
+        birdCords.left + birdCords.width > pipeSpriteCords.left
+      ) {
+        scoreVal.innerHTML = parseInt(scoreVal.innerHTML) + 1;
       }
       element.style.left = pipeSpriteCords.left - moveSpeed + "px";
     });
@@ -59,9 +66,8 @@ function addGravity() {
     });
 
     if (birdTop <= 0 || birdCords.bottom >= background.bottom) {
-      console.log(birdCords.bottom);
-      gameState = "over";
-      message.innerHTML = "Press enter to restart";
+      endGame();
+
       return;
     }
 
@@ -74,18 +80,28 @@ function addGravity() {
   }
 }
 let pipeGap = 36;
+let pipe_separation = 0;
 function addPipes() {
-  let pipePosi = Math.floor(Math.random() * 43) + 5;
-  let pipeSpriteInv = document.createElement("div");
-  pipeSpriteInv.classList.add("pipe_sprite");
-  pipeSpriteInv.style.top = pipePosi - 70 + "vh";
-  pipeSpriteInv.style.left = "100vw";
-  document.body.appendChild(pipeSpriteInv);
+  if (pipe_separation > 115) {
+    pipe_separation = 0;
+    let pipePosi = Math.floor(Math.random() * 43) + 5;
+    let pipeSpriteInv = document.createElement("div");
+    pipeSpriteInv.classList.add("pipe_sprite");
+    pipeSpriteInv.style.top = pipePosi - 70 + "vh";
+    pipeSpriteInv.style.left = "100vw";
+    document.body.appendChild(pipeSpriteInv);
 
-  let pipeSprite = document.createElement("div");
-  pipeSprite.classList.add("pipe_sprite");
-  pipeSprite.style.top = pipePosi + pipeGap + "vh";
-  pipeSprite.style.left = "100vw";
-  document.body.appendChild(pipeSprite);
+    let pipeSprite = document.createElement("div");
+    pipeSprite.classList.add("pipe_sprite");
+    pipeSprite.style.top = pipePosi + pipeGap + "vh";
+    pipeSprite.style.left = "100vw";
+    document.body.appendChild(pipeSprite);
+  }
+  pipe_separation++;
+  requestAnimationFrame(addPipes);
 }
-setInterval(addPipes, 2000);
+addPipes();
+function endGame() {
+  gameState = "over";
+  message.innerHTML = "Press enter to restart";
+}
