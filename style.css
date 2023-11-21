@@ -22,8 +22,8 @@ body {
 .bird {
   position: fixed;
   object-fit: cover;
-  width: 150px;
-  height: 100px;
+  width: 125px;
+  height: 80px;
   top: 40vh;
   left: 30vw;
   z-index: 100;
