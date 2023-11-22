@@ -11,6 +11,7 @@ let birdTop = birdCords.top;
 let bird_dy = 0;
 let gameState = "start";
 let isRunning = false;
+let increaseSpeed = 0;
 document.addEventListener("keydown", (e) => {
   if (e.key == "Enter") {
     let pipeSprite = Array.from(document.getElementsByClassName("pipe_sprite"));
@@ -19,6 +20,7 @@ document.addEventListener("keydown", (e) => {
     });
     if (gameState == "start" || gameState == "over") {
       gameState = "play";
+      moveSpeed = 3;
       isRunning = true;
       message.innerHTML = "";
       scoreTitle.innerHTML = "Score :";
@@ -31,6 +33,7 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+
 function play() {
   if (gameState == "play") {
     let pipeSprite = Array.from(document.getElementsByClassName("pipe_sprite"));
@@ -54,11 +57,20 @@ function play() {
         birdCords.left < pipeSpriteCords.right + moveSpeed &&
         element.increase_score == 1
       ) {
+        increaseSpeed++;
         element.increase_score = 0;
         scoreVal.innerHTML = parseInt(scoreVal.innerHTML) + 1;
       }
       element.style.left = pipeSpriteCords.left - moveSpeed + "px";
     });
+    if (increaseSpeed == 5) {
+      if (moveSpeed >= 5) {
+        moveSpeed = 5;
+      }
+      moveSpeed += 0.2;
+      increaseSpeed = 0;
+      console.log(increaseSpeed);
+    }
     requestAnimationFrame(play);
   }
 }
@@ -112,5 +124,6 @@ function addPipes() {
 function endGame() {
   gameState = "over";
   message.innerHTML = "Press enter to restart";
+  moveSpeed = 3;
   isRunning = false;
 }
