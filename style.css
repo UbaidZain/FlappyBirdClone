@@ -51,16 +51,23 @@ body {
 }
 
 .score {
+  top: 0;
+  left: 0;
+}
+.highest-score,
+.score {
   position: fixed;
   z-index: 10;
   height: 10vh;
   font-size: 10vh;
   font-weight: 100;
   color: goldenrod;
-  top: 0;
-  left: 0;
 }
 
 .score_val {
   color: gold;
+}
+.highest-score {
+  top: 0;
+  right: 5vw;
 }

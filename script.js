@@ -1,6 +1,7 @@
 let bird = document.querySelector(".bird");
 let background = document.querySelector(".background").getBoundingClientRect();
-
+let highScoreTitle = document.querySelector(".highest-score-title");
+let highScoreValue = document.querySelector(".highest-score-value");
 let message = document.querySelector(".message");
 let scoreVal = document.querySelector(".score-value");
 let scoreTitle = document.querySelector(".score-title");
@@ -12,6 +13,8 @@ let bird_dy = 0;
 let gameState = "start";
 let isRunning = false;
 let increaseSpeed = 0;
+highScoreValue.innerHTML = JSON.parse(localStorage.getItem("highScore"));
+
 document.addEventListener("keydown", (e) => {
   if (e.key == "Enter") {
     let pipeSprite = Array.from(document.getElementsByClassName("pipe_sprite"));
@@ -23,6 +26,8 @@ document.addEventListener("keydown", (e) => {
       moveSpeed = 3;
       isRunning = true;
       message.innerHTML = "";
+      highScoreTitle.innerHTML = "";
+      highScoreValue.innerHTML = "";
       scoreTitle.innerHTML = "Score :";
       scoreVal.innerHTML = "0";
       bird.style.top = "40vh";
@@ -50,6 +55,7 @@ function play() {
         birdCords.top < pipeSpriteCords.top + pipeSpriteCords.height &&
         birdCords.top + birdCords.height > pipeSpriteCords.top
       ) {
+        highScoreSave(parseInt(scoreVal.innerHTML));
         endGame();
       }
       if (
@@ -121,9 +127,26 @@ function addPipes() {
     requestAnimationFrame(addPipes);
   }
 }
+
+let lisat = [1, 2];
+lisat[-1] = 3;
+console.log(lisat);
 function endGame() {
   gameState = "over";
   message.innerHTML = "Press enter to restart";
   moveSpeed = 3;
   isRunning = false;
+}
+function highScoreSave() {
+  let score = parseInt(scoreVal.innerHTML);
+  let highScore;
+  if (localStorage.getItem("highScore") === null) {
+    highScore = [0];
+  } else {
+    highScore = JSON.parse(localStorage.getItem("highScore"));
+  }
+  if (highScore[0] < score) {
+    highScore[0] = score;
+  }
+  localStorage.setItem("highScore", JSON.stringify(highScore));
 }
