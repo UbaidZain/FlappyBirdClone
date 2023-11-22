@@ -10,18 +10,23 @@ let gravity = 0.5;
 let birdTop = birdCords.top;
 let bird_dy = 0;
 let gameState = "start";
-
+let isRunning = false;
 document.addEventListener("keydown", (e) => {
   if (e.key == "Enter") {
+    let pipeSprite = Array.from(document.getElementsByClassName("pipe_sprite"));
+    pipeSprite.forEach((sprite) => {
+      sprite.remove();
+    });
     if (gameState == "start" || gameState == "over") {
       gameState = "play";
-
+      isRunning = true;
       message.innerHTML = "";
       scoreTitle.innerHTML = "Score :";
       scoreVal.innerHTML = "0";
       bird.style.top = "40vh";
 
       addGravity();
+      addPipes();
       play();
     }
   }
@@ -45,9 +50,11 @@ function play() {
         endGame();
       }
       if (
-        birdCords.left < pipeSpriteCords.left + pipeSpriteCords.width &&
-        birdCords.left + birdCords.width > pipeSpriteCords.left
+        birdCords.left > pipeSpriteCords.left &&
+        birdCords.left < pipeSpriteCords.right + moveSpeed &&
+        element.increase_score == 1
       ) {
+        element.increase_score = 0;
         scoreVal.innerHTML = parseInt(scoreVal.innerHTML) + 1;
       }
       element.style.left = pipeSpriteCords.left - moveSpeed + "px";
@@ -67,7 +74,6 @@ function addGravity() {
 
     if (birdTop <= 0 || birdCords.bottom >= background.bottom) {
       endGame();
-
       return;
     }
 
@@ -95,13 +101,16 @@ function addPipes() {
     pipeSprite.classList.add("pipe_sprite");
     pipeSprite.style.top = pipePosi + pipeGap + "vh";
     pipeSprite.style.left = "100vw";
+    pipeSprite.increase_score = "1";
     document.body.appendChild(pipeSprite);
   }
   pipe_separation++;
-  requestAnimationFrame(addPipes);
+  if (isRunning == true) {
+    requestAnimationFrame(addPipes);
+  }
 }
-addPipes();
 function endGame() {
   gameState = "over";
   message.innerHTML = "Press enter to restart";
+  isRunning = false;
 }
